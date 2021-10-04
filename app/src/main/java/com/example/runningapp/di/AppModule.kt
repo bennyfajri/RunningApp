@@ -15,8 +15,8 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
-    @Singleton
     @Provides
+    @Singleton
     fun provideRunningDatabase(
         @ApplicationContext context: Context
     ) = Room.databaseBuilder(
@@ -28,5 +28,4 @@ object AppModule {
     @Singleton
     @Provides
     fun provideRunDao(db: RunningDatabase) = db.getRunDao()
-
 }

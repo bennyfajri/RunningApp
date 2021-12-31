@@ -57,12 +57,14 @@ class TrackingServices : LifecycleService() {
 
     override fun onCreate() {
         super.onCreate()
+        postInitialValues()
         fusedLocationPriorityClient = FusedLocationProviderClient(this)
 
         isTracking.observe(this, Observer {
             updateLocationTracking(it)
         })
     }
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         intent?.let {
             when (it.action) {
@@ -72,11 +74,12 @@ class TrackingServices : LifecycleService() {
                         isFirstRun = false
                     }else{
                         Timber.d("Resuming service...")
+                        startForegroundService()
                     }
-                    Timber.d("Started or resumed service")
                 }
                 ACTION_PAUSE_SERVICE -> {
                     Timber.d("Paused service")
+                    pauseService()
                 }
                 ACTION_STOP_SERVICE -> {
                     Timber.d("Stopped service")
@@ -85,6 +88,10 @@ class TrackingServices : LifecycleService() {
         }
         return super.onStartCommand(intent, flags, startId)
 
+    }
+
+    private fun pauseService() {
+        isTracking.postValue(false)
     }
 
     @SuppressLint("MissingPermission")
